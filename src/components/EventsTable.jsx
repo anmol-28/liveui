@@ -1,8 +1,26 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import '../index.css';
 
 const EventsTable = ({ events }) => {
   const hasEvents = Array.isArray(events) && events.length > 0;
+  const pageSize = 10;
+  const [page, setPage] = useState(1);
+
+  const totalPages = useMemo(() => {
+    if (!hasEvents) return 1;
+    return Math.max(1, Math.ceil(events.length / pageSize));
+  }, [events, hasEvents]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+    if (page < 1) setPage(1);
+  }, [page, totalPages]);
+
+  const pageEvents = useMemo(() => {
+    if (!hasEvents) return [];
+    const start = (page - 1) * pageSize;
+    return events.slice(start, start + pageSize);
+  }, [events, hasEvents, page]);
 
   return (
     <div className="events-table-container">
@@ -23,7 +41,7 @@ const EventsTable = ({ events }) => {
             </tr>
           )}
           {hasEvents &&
-            events.map((event) => (
+            pageEvents.map((event) => (
               <tr key={event.id}>
                 <td>{event.id}</td>
                 <td>{event.org}</td>
@@ -34,6 +52,24 @@ const EventsTable = ({ events }) => {
             ))}
         </tbody>
       </table>
+
+      {hasEvents && totalPages > 1 && (
+        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
+          <button type="button" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+            Prev
+          </button>
+          <span>
+            Page {page} / {totalPages}
+          </span>
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };
