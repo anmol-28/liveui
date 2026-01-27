@@ -39,6 +39,11 @@ function App() {
     0
   );
   const activeOrgs = new Set(events.map((item) => item.org)).size;
+  const eventsSortedByIdAsc = [...events].sort((a, b) => {
+    const aId = Number(a?.id) || 0;
+    const bId = Number(b?.id) || 0;
+    return aId - bId;
+  });
 
   return (
     <div className="app">
@@ -54,7 +59,7 @@ function App() {
         </section>
         
         <section className="table-section">
-          <EventsTable events={events} />
+          <EventsTable events={eventsSortedByIdAsc} />
         </section>
         
         <section className="chart-section">
