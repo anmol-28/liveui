@@ -139,5 +139,3 @@ No environment variables required (uses Vite proxy for API calls)
 DATABASE_URL=postgresql://...
 PORT=4000
 ```
-
-**Important**: `.env` files are gitignored. Never commit database credentials.
